@@ -1,0 +1,29 @@
+<component name="libraryTable">
+  <library name="Maven: org.apache.flink:flink-shaded-zookeeper-3:3.4.14-12.0">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/flink/flink-shaded-zookeeper-3/3.4.14-12.0/flink-shaded-zookeeper-3-3.4.14-12.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/flink/flink-shaded-zookeeper-3/3.4.14-12.0/flink-shaded-zookeeper-3-3.4.14-12.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/flink/flink-shaded-zookeeper-3/3.4.14-12.0/flink-shaded-zookeeper-3-3.4.14-12.0-sources.jar!/" />
+      <root url="file://$PROJECT_DIR$/../apache-curator-4.3.0-src/curator-client/src/main/java" />
+      <root url="file://$PROJECT_DIR$/../apache-curator-4.3.0-src/curator-client/src/test/java" />
+      <root url="file://$PROJECT_DIR$/../apache-curator-4.3.0-src/curator-examples/src/main/java" />
+      <root url="file://$PROJECT_DIR$/../apache-curator-4.3.0-src/curator-framework/src/main/java" />
+      <root url="file://$PROJECT_DIR$/../apache-curator-4.3.0-src/curator-framework/src/test/java" />
+      <root url="file://$PROJECT_DIR$/../apache-curator-4.3.0-src/curator-recipes/src/main/java" />
+      <root url="file://$PROJECT_DIR$/../apache-curator-4.3.0-src/curator-recipes/src/test/java" />
+      <root url="file://$PROJECT_DIR$/../apache-curator-4.3.0-src/curator-test-zk34/src/test/java" />
+      <root url="file://$PROJECT_DIR$/../apache-curator-4.3.0-src/curator-test/src/main/java" />
+      <root url="file://$PROJECT_DIR$/../apache-curator-4.3.0-src/curator-test/src/test/java" />
+      <root url="file://$PROJECT_DIR$/../apache-curator-4.3.0-src/curator-x-async/src/main/java" />
+      <root url="file://$PROJECT_DIR$/../apache-curator-4.3.0-src/curator-x-async/src/test/java" />
+      <root url="file://$PROJECT_DIR$/../apache-curator-4.3.0-src/curator-x-discovery-server/src/main/java" />
+      <root url="file://$PROJECT_DIR$/../apache-curator-4.3.0-src/curator-x-discovery-server/src/test/java" />
+      <root url="file://$PROJECT_DIR$/../apache-curator-4.3.0-src/curator-x-discovery/src/main/java" />
+      <root url="file://$PROJECT_DIR$/../apache-curator-4.3.0-src/curator-x-discovery/src/test/java" />
+    </SOURCES>
+  </library>
+</component>
