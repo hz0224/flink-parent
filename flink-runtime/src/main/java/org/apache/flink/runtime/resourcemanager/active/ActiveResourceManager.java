@@ -60,11 +60,13 @@ import java.util.concurrent.TimeUnit;
  * <p>This resource manager actively requests and releases resources from/to the external resource
  * management frameworks. With different {@link ResourceManagerDriver} provided, this resource
  * manager can work with various frameworks.
+ *
+ *
  */
 public class ActiveResourceManager<WorkerType extends ResourceIDRetrievable> extends ResourceManager<WorkerType> implements ResourceEventHandler<WorkerType> {
 
     protected final Configuration flinkConfig;
-
+    //借助内部的ResourceManagerDriver实现不同的资源管理器。
     private final ResourceManagerDriver<WorkerType> resourceManagerDriver;
 
     /**

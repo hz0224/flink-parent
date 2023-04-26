@@ -97,6 +97,24 @@ import static org.apache.flink.runtime.security.ExitTrappingSecurityManager.repl
  * Base class for the Flink cluster entry points.
  *
  * <p>Specialization of this class can be used for the session mode and the per-job mode
+ * 1 ClusterEntrypoint代表集群的模式，它有3个子类：
+ *      1 SessionClusterEntrypoint  session集群
+ *          （1）StandaloneSessionClusterEntrypoint   独立的session集群，这也是Flink自带的集群启动入口点。
+ *          （2）YarnSessionClusterEntrypoint         yarn session集群的启动入口点，借助yran实现的session集群，实现了资源的动态分配。
+ *      2 JobClusterEntrypoint  per-job集群
+ *          （1）YarnJobClusterEntrypoint             yarn的per-job集群启动入口点。
+ *      3 ApplicationClusterEntryPoint  application集群
+ *          （1）YarnApplicationClusterEntryPoint     yarn的application集群启动入口点
+ *          （2）StandaloneApplicationClusterEntryPoint   独立的application集群启动入口点
+ *
+ * 2 DefaultDispatcherResourceManagerComponentFactory：初始化了一个 DefaultDispatcherResourceManagerComponentFactory 工厂实例，该类内部又会创建3个工厂实例：
+ *      1、Dispatcher = DefaultDispatcherRunnerFactory，生产 DefaultDispatcherRunner， 具体实现是： DispatcherRunnerLeaderElectionLifecycleManager
+ *      2、ResourceManager = StandaloneResourceManagerFactory，生产 StandaloneResourceManager
+ *      3、WebMonitorEndpoint = SessionRestEndpointFactory，生产 DispatcherRestEndpoint
+ * 这3个工厂实例用来创建 JobManager中启动过程中最重要的3个组件：
+ *      （1）Dispatcher   调度任务
+ *      （2）ResourceManager  资源管理
+ *      （3）WebMonitorEndpoint   接受client提交的任务，接着提交给Dispatcher进行调度
  */
 public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErrorHandler {
 
