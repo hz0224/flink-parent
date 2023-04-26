@@ -32,6 +32,11 @@ import java.util.concurrent.Executor;
 /**
  * A {@link ResourceManagerDriver} is responsible for requesting and releasing resources from/to a
  * particular external resource manager.
+ * 代表具体的资源框架类型，有3个实现类：
+ *  1 YarnResourceManagerDriver
+ *  2 KubernetesResourceManagerDriver
+ *  3 MesosResourceManagerDriver
+ *
  */
 public interface ResourceManagerDriver<WorkerType extends ResourceIDRetrievable> {
 

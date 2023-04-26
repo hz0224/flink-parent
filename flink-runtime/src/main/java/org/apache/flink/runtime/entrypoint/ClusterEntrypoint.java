@@ -98,12 +98,12 @@ import static org.apache.flink.runtime.security.ExitTrappingSecurityManager.repl
  *
  * <p>Specialization of this class can be used for the session mode and the per-job mode
  * 1 ClusterEntrypoint代表集群的模式，它有3个子类：
- *      1 SessionClusterEntrypoint  session集群
+ *      1 SessionClusterEntrypoint  session集群，可以基于Standalone，可以基于yarn，可以基于 mesos
  *          （1）StandaloneSessionClusterEntrypoint   独立的session集群，这也是Flink自带的集群启动入口点。
  *          （2）YarnSessionClusterEntrypoint         yarn session集群的启动入口点，借助yran实现的session集群，实现了资源的动态分配。
- *      2 JobClusterEntrypoint  per-job集群
+ *      2 JobClusterEntrypoint  per-job集群       可以基于yarn，可以基于Standalone
  *          （1）YarnJobClusterEntrypoint             yarn的per-job集群启动入口点。
- *      3 ApplicationClusterEntryPoint  application集群
+ *      3 ApplicationClusterEntryPoint  application集群   可以基于yarn，可以基于Standalone
  *          （1）YarnApplicationClusterEntryPoint     yarn的application集群启动入口点
  *          （2）StandaloneApplicationClusterEntryPoint   独立的application集群启动入口点
  *
@@ -114,7 +114,10 @@ import static org.apache.flink.runtime.security.ExitTrappingSecurityManager.repl
  * 这3个工厂实例用来创建 JobManager中启动过程中最重要的3个组件：
  *      （1）Dispatcher   调度任务
  *      （2）ResourceManager  资源管理
- *      （3）WebMonitorEndpoint   接受client提交的任务，接着提交给Dispatcher进行调度
+ *      （3）WebMonitorEndpoint   接受client提交的任务，接着提交给Dispatcher进行调度。
+ * ClusterEntrypoin决定了启动的是一个什么样的集群，其内部会通过 工厂去创建ResourceManager实例，如果使用的是外部资源框架，那么该ResourceManager就是ActiveResourceManager类型。
+ * ActiveResourceManager内部有一个ResourceManagerDriver类型的接口变量，代表具体的资源框架。
+ * 因此ClusterEntrypoint决定了集群的模式， ClusterEntrypoint内的 ResourceManager中的ResourceManagerDriver决定了哪个资源框架。
  */
 public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErrorHandler {
 

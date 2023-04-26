@@ -104,6 +104,8 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
  *   <li>{@link #requestSlot(JobMasterId, SlotRequest, Time)} requests a slot from the resource
  *       manager
  * </ul>
+ *
+ * 资源框架，是ClusterEntrypoin中的一个变量。
  */
 public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable> extends FencedRpcEndpoint<ResourceManagerId> implements ResourceManagerGateway, LeaderContender {
 
