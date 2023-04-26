@@ -1,10 +1,36 @@
-# Project exclude paths
-/flink-annotations/target/
-/flink-core/target/
-/flink-filesystems/flink-hadoop-fs/target/
-/flink-java/target/
-/flink-queryable-state/flink-queryable-state-client-java/target/
-/flink-runtime/target/
-/flink-test-utils-parent/flink-test-utils-junit/target/
-/target/
-/tools/force-shading/target/
+#maven ignore
+target/
+*.tar.gz
+*.jar
+*.war
+*.ear
+
+#idea ignore
+.idea/
+*.iml
+*.ipr
+*.iws
+
+
+
+#eclipse ignore
+.settings/
+.project
+.classpath
+
+#temp ignore
+/logPath_IS_UNDEFINED
+*.log
+*.*.log.zip
+*.cache
+*.diff
+*.patch
+*.tmp
+
+#system ignore
+.DS_Store
+Thumbs.db
+.idea
+
+# other edit
+*.vscode
