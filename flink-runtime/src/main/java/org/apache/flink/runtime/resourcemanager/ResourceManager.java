@@ -283,8 +283,10 @@ public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable> 
              *  注释： 这个地方的更多，更多的可以理解为：其实是把自己的信息写到 zk 中
              *  最后，会回调到 this.grantLeaderShip() 方法
              *  这句代码的调用，一共有四个地方：  ResourceManager, Dispatcher, WebMonitorEndpoint,  JobManager
+             *
+             *  leaderElectionService = DefaultLeaderElectionService
              */
-            leaderElectionService.start(this);
+            leaderElectionService.start(this); //this = resourceManager
 
             /*************************************************
              * TODO_MA 马中华 https://blog.csdn.net/zhongqi2513

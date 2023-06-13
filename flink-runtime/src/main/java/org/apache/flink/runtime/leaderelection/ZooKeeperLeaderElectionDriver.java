@@ -199,7 +199,7 @@ public class ZooKeeperLeaderElectionDriver implements LeaderElectionDriver, Lead
          * TODO_MA 马中华 https://blog.csdn.net/zhongqi2513
          *  注释：
          */
-        leaderElectionEventHandler.onGrantLeadership();
+        leaderElectionEventHandler.onGrantLeadership(); //leaderElectionEventHandler = DefaultLeaderElectionService
     }
 
     @Override

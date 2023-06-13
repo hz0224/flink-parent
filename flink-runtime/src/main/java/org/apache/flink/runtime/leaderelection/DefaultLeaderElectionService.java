@@ -238,7 +238,7 @@ public class DefaultLeaderElectionService implements LeaderElectionService, Lead
                  *  3、ResourceManager = ResourceManager
                  *  4、WebMonitorEndpint = WebMonitorEndpoint
                  */
-                leaderContender.grantLeadership(issuedLeaderSessionID);
+                leaderContender.grantLeadership(issuedLeaderSessionID); //leaderContender = ResourceManager
             } else {
                 if(LOG.isDebugEnabled()) {
                     LOG.debug("Ignoring the grant leadership notification since the {} has " + "already been closed.", leaderElectionDriver);
