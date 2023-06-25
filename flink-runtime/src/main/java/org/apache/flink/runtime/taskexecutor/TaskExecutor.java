@@ -465,6 +465,8 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
              *  通过启动 LeaderRetrievalService 注册一个监听 ResourceManagerLeaderListener 来监听 ZK 上保存的
              *  ResourceManager 的地址。
              *  如果有新的 leader 被选举出来，将会调用 Listener 的 notifyLeaderAddress() 方法去触发与 ResourceManager 的重连
+             *
+             *  resourceManagerLeaderRetriever = DefaultLeaderRetrievalService
              */
             // start by connecting to the ResourceManager
             resourceManagerLeaderRetriever.start(new ResourceManagerLeaderListener());
@@ -2178,6 +2180,7 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
         /*************************************************
          * TODO_MA 马中华 https://blog.csdn.net/zhongqi2513
          *  注释： fatalErrorHandler 就是 TaskManagerRunner
+         *  fatalErrorHandler = TaskManagerRunner
          */
         // The fatal error handler implementation should make sure that this call is non-blocking
         fatalErrorHandler.onFatalError(t);
