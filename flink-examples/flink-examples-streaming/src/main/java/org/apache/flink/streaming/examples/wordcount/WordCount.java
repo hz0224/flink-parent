@@ -28,22 +28,6 @@ import org.apache.flink.util.Preconditions;
 
 /**
  * // TODO_MA 注释： 实现“ WordCount”程序，该程序以流方式计算文本*文件上的简单单词出现直方图。
- * Implements the "WordCount" program that computes a simple word occurrence histogram over text
- * files in a streaming fashion.
- *
- * // TODO_MA 注释： 输入是纯文本文件，其行由换行符分隔
- * <p>The input is a plain text file with lines separated by newline characters.
- *
- * <p>Usage: <code>WordCount --input &lt;path&gt; --output &lt;path&gt;</code><br>
- * If no parameters are provided, the program is run with default data from {@link WordCountData}.
- *
- * <p>This example shows how to:
- *
- * <ul>
- *   <li>write a simple Flink Streaming program,
- *   <li>use tuple data types,
- *   <li>write and use user-defined functions.
- * </ul>
  */
 public class WordCount {
 
@@ -53,20 +37,21 @@ public class WordCount {
 
     public static void main(String[] args) throws Exception {
 
-        // Checking input parameters
         final MultipleParameterTool params = MultipleParameterTool.fromArgs(args);
 
         /*************************************************
-         * TODO_MA 马中华 https://blog.csdn.net/zhongqi2513
          *  注释： 第一步： 构建　StreamExecutionEnvironment
-         *  -
          *  这行代码会返回一个可用的执行环境。执行环境是整个flink程序执行的上下文，记录了相关配置（如并行度等），
          *  并提供了一系列方法，如读取输入流的方法，以及真正开始运行整个代码 的execute方法等。
-         *  -
          *  1、初始化得到 StateBackend
          *  2、从 env.getConfig() 解析得到 所有 checkpoint 有关的各种配置
-         *  -
-         *  另外补充一点：这个对象的内部，有一个成员变量： List transformations;
+         *
+         *  这个对象的内部，有一个很重要的成员变量： List<Transformation<?>> transformations
+         *     1、userFunction（算子）
+         *     2、StrewamOperator
+         *     3、Transformation
+         *     4、StreamNode（StreamGraph中的顶点， 因此一个算子一个顶点）
+         *     这4者之间都是一一对应的。
          */
         // set up the execution environment
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
