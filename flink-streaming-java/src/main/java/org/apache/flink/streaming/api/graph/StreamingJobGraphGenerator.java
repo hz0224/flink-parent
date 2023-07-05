@@ -182,8 +182,9 @@ public class StreamingJobGraphGenerator {
         jobGraph.enableApproximateLocalRecovery(streamGraph.getCheckpointConfig().isApproximateLocalRecoveryEnabled());
 
         // TODO_MA 注释： 为节点生成确定性哈希，以便在提交未发生变化的情况下对其进行标识。
-        // Generate deterministic hashes for the nodes in order to identify them across
-        // submission iff they didn't change.
+        // 为所有节点都生成一个唯一的hash id，这个哈希函数可以用户进行自己定义，如果节点在多次提交中没有改变(如组、并发度、上下游关系等)，那么这个hash id就不会改变，这个主要是用于故障恢复。
+        // 然后在chaining处理、生成JobVetex、JobEdge等，之后就是写入各种配置信息例如缓存、checkpoints等。
+        // 若Flink任务失败了，各个算子是能够从checkpoint中恢复到失败前的状态的，恢复的时候的依据就是JobVertexID(hash值)进行状态恢复。相同的任务在恢复的时候要求算子的hash值不变，因此能够获得对应的状态进行恢复。
         Map<Integer, byte[]> hashes = defaultStreamGraphHasher.traverseStreamGraphAndGenerateHashes(streamGraph);
 
         // TODO_MA 注释： 生成旧版本哈希以向后兼容
@@ -215,7 +216,7 @@ public class StreamingJobGraphGenerator {
         // TODO_MA 注释： 出边集合，已经在 上面的代码中，已经搞定了。
         setPhysicalEdges();
 
-        // TODO_MA 注释： 设置 SlotSharingAndCoLocation
+        // TODO_MA 注释：  设置是否在一个slot执行task，slot分组策略
         setSlotSharingAndCoLocation();
 
         // TODO_MA 注释： 设置 ManagedMemoryFraction
@@ -390,7 +391,16 @@ public class StreamingJobGraphGenerator {
 
     /*************************************************
      * TODO_MA 马中华 https://blog.csdn.net/zhongqi2513
-     *  注释： 创建一个 OperatorChain  = JobVertex
+     *  注释： 每调用一次createChain就会创建一个 OperatorChain  = JobVertex
+     *
+     *  从 Source 开始遍历 StreamGraph 中当前节点的所有出边，调用 isChainable() 方法判断是否可以被链在一起（这个判断逻辑稍后会讲到）。
+     *  可以链接的出边被放入 chainableOutputs 列表，否则放入 nonChainableOutputs 列表。
+     *  对于 chainableOutputs 中的边，就会以这些边的直接下游为起点，继续递归调用createChain() 方法延展算子链。
+     *  对于 nonChainableOutputs 中的边，由于当前算子链的延展已经到头，就会以这些“断点”为起点，继续递归调用 createChain() 方法试图创建新的算子链。
+     *  也就是说，逻辑计划中整个创建算子链的过程都是递归的，亦即实际返回时，是从 Sink 端开始返回的。
+     *
+     *  然后要判断当前节点是不是算子链的起始节点。如果是，则调用 createJobVertex()方法为算子链创建一个 JobVertex（ 即 JobGraph 中的节点），也就形成了我们在Web UI 中看到的 JobGraph 效果。
+     *  最后，还需要将各个节点的算子链数据写入各自的 StreamConfig 中，算子链的起始节点要额外保存下 transitiveOutEdges。StreamConfig 在后文的物理执行阶段会再次用到。
      */
     private List<StreamEdge> createChain(final Integer currentNodeId, final int chainIndex,
             final OperatorChainInfo chainInfo, final Map<Integer, OperatorChainInfo> chainEntryPoints) {
@@ -398,6 +408,7 @@ public class StreamingJobGraphGenerator {
         Integer startNodeId = chainInfo.getStartNodeId();
         if(!builtVertices.contains(startNodeId)) {
 
+            //当前算子链在 JobGraph 中的出边列表，同时也是 createChain() 方法的最终返回值
             List<StreamEdge> transitiveOutEdges = new ArrayList<StreamEdge>();
 
             // TODO_MA 注释： 存储可 chain 的 StreamEdge
@@ -432,7 +443,7 @@ public class StreamingJobGraphGenerator {
                 }
             }
 
-            // TODO_MA 注释： 把可以 chain 在一起的 StreamEdge 两边的 Operator chain 在一个形成一个 OperatorChain
+            // 对于 chainableOutputs 中的边，就会以这些边的直接下游为起点，继续递归调用createChain() 方法延展算子链
             for(StreamEdge chainable : chainableOutputs) {
 
                 // TODO_MA 注释： 递归 chain
@@ -441,6 +452,7 @@ public class StreamingJobGraphGenerator {
                         .addAll(createChain(chainable.getTargetId(), chainIndex + 1, chainInfo, chainEntryPoints));
             }
 
+            //对于 nonChainableOutputs 中的边，由于当前算子链的延展已经到头，就会以这些“断点”为起点，继续递归调用 createChain() 方法试图创建新的算子链
             for(StreamEdge nonChainable : nonChainableOutputs) {
                 transitiveOutEdges.add(nonChainable);
 

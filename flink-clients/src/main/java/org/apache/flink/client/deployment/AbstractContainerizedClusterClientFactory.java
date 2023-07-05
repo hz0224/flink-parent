@@ -38,17 +38,17 @@ public abstract class AbstractContainerizedClusterClientFactory<ClusterID> imple
     public ClusterSpecification getClusterSpecification(Configuration configuration) {
         checkNotNull(configuration);
 
-        // TODO_MA 注释： jobmanager 内存大小
+        // TODO_MA 注释： jobmanager 内存大小  jobmanager.memory.process.size
         final int jobManagerMemoryMB = JobManagerProcessUtils
                 .processSpecFromConfigWithNewOptionToInterpretLegacyHeap(configuration,
                         JobManagerOptions.TOTAL_PROCESS_MEMORY).getTotalProcessMemorySize().getMebiBytes();
 
-        // TODO_MA 注释： taskManager 内存大小
+        // TODO_MA 注释： taskManager 内存大小 taskmanager.memory.process.size
         final int taskManagerMemoryMB = TaskExecutorProcessUtils.processSpecFromConfig(TaskExecutorProcessUtils
                 .getConfigurationMapLegacyTaskManagerHeapSizeToConfigOption(configuration,
                         TaskManagerOptions.TOTAL_PROCESS_MEMORY)).getTotalProcessMemorySize().getMebiBytes();
 
-        // TODO_MA 注释： 每个 taskManager 上抽象几个 slot
+        // TODO_MA 注释： 每个 taskManager 上抽象几个 slot    taskmanager.numberOfTaskSlots
         int slotsPerTaskManager = configuration.getInteger(TaskManagerOptions.NUM_TASK_SLOTS);
 
         // TODO_MA 注释： 包装成大对象返回
