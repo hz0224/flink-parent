@@ -124,7 +124,7 @@ class SlotSharingExecutionSlotAllocator implements ExecutionSlotAllocator {
         Map<ExecutionSlotSharingGroup, List<ExecutionVertexID>> executionsByGroup = executionVertexIds.stream()
                 .collect(Collectors.groupingBy(slotSharingStrategy::getExecutionSlotSharingGroup));
 
-        // TODO_MA 注释： 给每个组申请 slot
+        // TODO_MA 注释： 给每个组申请 slot，默认情况下，所有task属于同一个组.
         Map<ExecutionSlotSharingGroup, SharedSlot> slots = executionsByGroup.keySet().stream()
 
                 /*************************************************
