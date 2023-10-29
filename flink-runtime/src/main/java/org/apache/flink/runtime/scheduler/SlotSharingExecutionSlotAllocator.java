@@ -112,6 +112,15 @@ class SlotSharingExecutionSlotAllocator implements ExecutionSlotAllocator {
      *
      * @param executionVertexSchedulingRequirements the requirements for scheduling the executions.
      */
+    /**
+     * 该方法最终返回：List<SlotExecutionVertexAssignment>
+     * SlotExecutionVertexAssignment描述的是一个 顶点Task 和一个 Slot 的分派关系的映射。(task和slot是多对一的关系)
+     * 该方法的目的就是为了生成顶点task和物理slot的映射关系，主要两件事：
+     *  1、申请物理slot/共享slot
+     *  2、根据共享slot得到逻辑slot,建立task和物理slot的映射。每个task顶点和物理slot建立映射就是逻辑slot。
+     * @param executionVertexSchedulingRequirements The requirements for scheduling the executions.
+     * @return
+     */
     @Override
     public List<SlotExecutionVertexAssignment> allocateSlotsFor(
             List<ExecutionVertexSchedulingRequirements> executionVertexSchedulingRequirements) {
@@ -138,6 +147,7 @@ class SlotSharingExecutionSlotAllocator implements ExecutionSlotAllocator {
          * TODO_MA 马中华 https://blog.csdn.net/zhongqi2513
          *  注释：
          */
+        //从物理/共享slot得到逻辑slot
         Map<ExecutionVertexID, SlotExecutionVertexAssignment> assignments = allocateLogicalSlotsFromSharedSlots(slots,
                 executionsByGroup);
 
