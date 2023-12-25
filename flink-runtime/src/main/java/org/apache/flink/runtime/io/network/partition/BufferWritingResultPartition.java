@@ -140,21 +140,31 @@ public abstract class BufferWritingResultPartition extends ResultPartition {
 
     @Override
     public void emitRecord(ByteBuffer record, int targetSubpartition) throws IOException {
+        /**
+         * 为这个targetSubpartition申请了一个BufferBuilder并且将数据record添加到BufferBuilder中，但是不一定将数据record完全添加完
+         * 一条记录很大的话，可能会写入到多个Buffer中。
+         * 已经写到BufferBuilder中的数据会从record中截断。
+         * BufferBuilder内部有一个MemorySegment，MemorySegment是Flink管理内存的一种结构，用于存储数据。
+         */
         BufferBuilder buffer = appendUnicastDataForNewRecord(record, targetSubpartition);
 
+        //判断record中是否还有数据
         while(record.hasRemaining()) {
-            // full buffer, partial record
+            /**
+             * 能走到这里说明上一个写操作使这个buffer满了，否则如果没满的话，那么record一定是全部写完了，不会还有hasRemaining.
+             * 对刚刚写满的那个BufferBuilder标记为已完成，同时使 unicastBufferBuilders[targetSubpartition] = null;
+             */
             finishUnicastBufferBuilder(targetSubpartition);
 
-            /*************************************************
-             * TODO_MA 马中华 https://blog.csdn.net/zhongqi2513
-             *  注释：
+            /*
+             *  当前这条记录没有写完，申请新的 buffer 继续写入.
              */
             buffer = appendUnicastDataForRecordContinuation(record, targetSubpartition);
         }
 
+        //走到这里说明已经将record写到1个或多个BufferBuilder中了，还需要再判断一下最后一个BufferBuilder是否已经写满。
         if(buffer.isFull()) {
-            // full buffer, full record
+            //同样，如果buffer满了，标记为已完成。
             finishUnicastBufferBuilder(targetSubpartition);
         }
 
