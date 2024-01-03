@@ -100,7 +100,7 @@ class PartitionRequestQueue extends ChannelInboundHandlerAdapter {
         /*************************************************
          * TODO_MA 马中华 https://blog.csdn.net/zhongqi2513
          *  注释： 转到 203 行
-         *  就是在执行： PartitionRequestQuueue 的 userEventTriggered();
+         *  就是在执行： PartitionRequestQueue 的 userEventTriggered();
          */
         ctx.executor().execute(() -> ctx.pipeline().fireUserEventTriggered(reader));
     }
