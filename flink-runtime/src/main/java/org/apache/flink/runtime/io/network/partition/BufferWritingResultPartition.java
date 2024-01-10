@@ -138,7 +138,7 @@ public abstract class BufferWritingResultPartition extends ResultPartition {
         }
     }
 
-    @Override
+    @Override//将数据写到ResultSubpartition的buffers队列中
     public void emitRecord(ByteBuffer record, int targetSubpartition) throws IOException {
         /**
          * 为这个targetSubpartition申请了一个BufferBuilder并且将数据record添加到BufferBuilder中，但是不一定将数据record完全添加完
@@ -157,7 +157,8 @@ public abstract class BufferWritingResultPartition extends ResultPartition {
             finishUnicastBufferBuilder(targetSubpartition);
 
             /*
-             *  当前这条记录没有写完，申请新的 buffer 继续写入.
+             *  当前这条记录没有写完，申请新的 buffer 继续写入
+             *  同时将新申请的buffer添加到 ResultSubpartition的buffers队列中（PipelinedSubpartition中的buffers）
              */
             buffer = appendUnicastDataForRecordContinuation(record, targetSubpartition);
         }
@@ -353,7 +354,15 @@ public abstract class BufferWritingResultPartition extends ResultPartition {
         return bufferBuilder;
     }
 
+    //从LocalBufferPool中申请buffer，LocalBufferPool中的buffer数量未达到最大值时，会从NetworkBufferPool中申请
+
+    /**
+     * 从LocalBufferPool中申请buffer
+     *  1、LocalBufferPool中的buffer数量未达到最大值时，会从NetworkBufferPool中申请
+     *  2、LocalBufferPool中的buffer数量达到最大值时，该方法会阻塞，此时写数据的过程也就阻塞了。
+     */
     private BufferBuilder requestNewBufferBuilderFromPool(int targetSubpartition) throws IOException {
+        //bufferPool = LocalBufferPool
         BufferBuilder bufferBuilder = bufferPool.requestBufferBuilder(targetSubpartition);
         if(bufferBuilder != null) {
             return bufferBuilder;
